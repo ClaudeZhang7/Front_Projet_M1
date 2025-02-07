@@ -1,0 +1,6 @@
+[build]
+command = "ng build --configuration=production"
+publish = "dist/League"
+
+[context.production.environment]
+NODE_VERSION = "20.12.2"
