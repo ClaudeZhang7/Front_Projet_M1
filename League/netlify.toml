@@ -1,5 +1,5 @@
 [build]
-command = "npm run build"
+command = "npx ng build --configuration=production"
 publish = "dist/league"
 
 [context.production.environment]
