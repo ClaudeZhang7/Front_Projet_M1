@@ -1,6 +1,6 @@
 [build]
 command = "npx ng build --configuration=production"
-publish = "dist/league"
+publish = "dist/league/browser"
 
 [context.production.environment]
 NODE_VERSION = "20.12.2"
