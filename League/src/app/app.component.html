@@ -1,5 +1,7 @@
 
-<app-navbar></app-navbar>
+
+<!-- Affiche la navbar si l'URL n'est pas '/login' -->
+<app-navbar *ngIf="showNavbar()"></app-navbar>
 <div class="content">
   <router-outlet></router-outlet>
 </div>
