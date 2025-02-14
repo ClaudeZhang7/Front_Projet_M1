@@ -46,3 +46,54 @@ img {
     height: 50px; 
     max-width: 100%; 
 }
+
+
+.filters-container {
+  display: flex;
+  gap: 10px;
+}
+.filter-select {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+
+
+
+#logoutBtn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px; 
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s;
+  z-index: 1000;
+}
+#logoutBtn:hover {
+  background: #c82333;
+}
+
+#loginBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px; 
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s;
+  z-index: 1000;
+}
+#loginBtn:hover {
+  background: #0056b3;
+}
