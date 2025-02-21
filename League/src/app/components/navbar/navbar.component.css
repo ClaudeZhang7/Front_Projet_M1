@@ -60,40 +60,48 @@ img {
 }
 
 
-
-
-#logoutBtn {
+.login-icon {
   position: fixed;
-  bottom: 20px;
-  left: 20px; 
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
+  top: 20px; 
+ right: 500px;  
+  width: 35px;
+  height: 35px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: background 0.3s;
-  z-index: 1000;
+  background-color: #007bff; /* Bleu */
+  border-radius: 50%; /* Rend le fond rond */
+  padding: 5px; /* Ajuste l'espacement autour de l'image */
+  transition: transform 0.2s ease-in-out;
 }
-#logoutBtn:hover {
-  background: #c82333;
+.login-icon:hover {
+  transform: scale(1.1);
+}
+#logout-icon {
+  position: fixed;
+  top: 24px; 
+  right: 450px; /* Aligné à droite */
+  width: 30px; /* Taille du  bouton */
+  height: 30px;
+  border-radius: 50%; /* Bouton rond */
+  background-image: url('/assets/deco.png'); /* Image de fond */
+  background-size: cover; /* Ajuste l'image */
+  background-position: center; /* Centre l'image */
+  background-repeat: no-repeat;
+  justify-content: center;
+  z-index: 1050;
+  border: none; /* Supprime la bordure */
+
 }
 
-#loginBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px; 
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: background 0.3s;
-  z-index: 1000;
+#logout-icon:hover {
+  transform: scale(1.1);
 }
-#loginBtn:hover {
-  background: #0056b3;
+
+/* Ajuste l’image à l’intérieur du bouton */
+#logout-icon img {
+  width: 60%; /* Ajuste la taille de l'image */
+  height: auto;
 }
+
+
+
+
