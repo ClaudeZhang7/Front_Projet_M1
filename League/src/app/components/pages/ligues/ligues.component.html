@@ -9,8 +9,8 @@
           <th>ID</th>
           <th>Nom</th>
           <th>Pays</th>
-          <th>Date de création</th>
-          <th>Actions</th>
+          <th>Date de création </th>
+          <th *ngIf="isConnected$ | async">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -19,7 +19,7 @@
           <td>Premier League</td>
           <td>Angleterre</td>
           <td>1992-02-20</td>
-          <td>
+          <td *ngIf="isConnected$ | async">
             <button class="btn btn-warning btn-sm">Modifier</button>
             <button class="btn btn-danger btn-sm">Supprimer</button>
             <button class="btn btn-info btn-sm text-white">Voir</button>
@@ -30,7 +30,7 @@
           <td>La Liga</td>
           <td>Espagne</td>
           <td>1929-06-10</td>
-          <td>
+          <td *ngIf="isConnected$ | async" >
             <button class="btn btn-warning btn-sm">Modifier</button>
             <button class="btn btn-danger btn-sm">Supprimer</button>
             <button class="btn btn-info btn-sm text-white">Voir</button>
@@ -39,6 +39,6 @@
       </tbody>
     </table>
   
-    <button class="btn btn-success">Ajouter une Ligue</button>
+    <button class="btn btn-success" *ngIf="isConnected$ | async">Ajouter une Ligue</button>
   </div>
   
