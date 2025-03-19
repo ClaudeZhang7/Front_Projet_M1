@@ -1,12 +1,31 @@
-<button class="back-btn" (click)="goToLigues()">Retour</button>
+<!-- <button class="back-btn" (click)="goToLigues()">Retour</button>
 <div class="overlay"></div>
 <div class="login-container">
   <h2>Connexion</h2>
   <form id="loginForm" action="#" method="post">
-    <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+    <input type="text" name="email" placeholder="Nom d'utilisateur" required>
     <input type="password" name="password" placeholder="Mot de passe" required>
     <button type="submit">Se connecter</button>
   </form>
+  <div class="info">
+    <p>Bienvenue sur Football Management.</p>
+  </div>
+</div> -->
+
+<button class="back-btn" (click)="goToLigues()">Retour</button>
+
+<div class="overlay"></div>
+
+<div class="login-container">
+  <h2>Connexion</h2>
+  <form id="loginForm" (ngSubmit)="login()">
+    <input type="text" [(ngModel)]="email" name="email" placeholder="Email" required>
+    <input type="password" [(ngModel)]="password" name="password" placeholder="Mot de passe" required>
+    <button type="submit">Se connecter</button>
+  </form>
+
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
   <div class="info">
     <p>Bienvenue sur Football Management.</p>
   </div>
