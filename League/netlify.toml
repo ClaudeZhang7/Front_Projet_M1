@@ -1,5 +1,6 @@
 [build]
-command = "npx ng build --configuration=production"
+command = "NG_APP_API_URL=$NG_APP_API_URL npx ng build --configuration=production"
+
 publish = "dist/league/browser"
 
 [context.production.environment]
