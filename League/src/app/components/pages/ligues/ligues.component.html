@@ -1,44 +1,90 @@
 <div class="container mt-4 cadre">
-    <h2 class="text-primary">Liste des Ligues</h2>
-  
-    <input type="text" class="form-control mb-3" placeholder="Rechercher une ligue...">
-  
-    <table class="table table-bordered">
-      <thead class="table-primary">
-        <tr>
-          <th>ID</th>
-          <th>Nom</th>
-          <th>Pays</th>
-          <th>Date de création </th>
-          <th *ngIf="isConnected$ | async">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Premier League</td>
-          <td>Angleterre</td>
-          <td>1992-02-20</td>
-          <td *ngIf="isConnected$ | async">
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>La Liga</td>
-          <td>Espagne</td>
-          <td>1929-06-10</td>
-          <td *ngIf="isConnected$ | async" >
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  
-    <button class="btn btn-success" *ngIf="isConnected$ | async">Ajouter une Ligue</button>
+  <h2 class="text-primary">Liste des Ligues</h2>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
+
+  <input type="text" class="form-control mb-3" placeholder="Rechercher une ligue..." [(ngModel)]="searchTerm">
+
+  <table class="table table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Pays</th>
+        <th>Date de création</th>
+        <th *ngIf="authService.isConnected$ | async">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let league of filteredLeagues">
+        <td>{{ league.id }}</td>
+        <td>{{ league.display_name }}</td>
+        <td>{{ league.country }}</td>
+        <td>{{ league.date_creation | date: 'yyyy-MM-dd' }}</td> 
+        <td *ngIf="authService.isConnected$ | async">
+          <button class="btn btn-warning btn-sm" (click)="editLeague(league)" data-bs-toggle="modal" data-bs-target="#editLeagueModal">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteLeague(league.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   
+    <button class="btn btn-success mb-3" *ngIf="authService.isConnected$ | async"
+          data-bs-toggle="modal" data-bs-target="#addLeagueModal">Ajouter une Ligue
+    </button>
+
+
+  <div class="modal fade" id="editLeagueModal" tabindex="-1" aria-labelledby="editLeagueModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editLeagueModalLabel">Modifier la Ligue</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div *ngIf="selectedLeague">
+              <label for="display_name">Nom de la ligue</label>
+              <input type="text" id="display_name" [(ngModel)]="selectedLeague.display_name" class="form-control" name="display_name">
+            
+              <label for="country">Pays</label>
+              <input type="text" id="country" [(ngModel)]="selectedLeague.country" class="form-control" name="country">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="updateLeague()" data-bs-dismiss="modal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="modal fade" id="addLeagueModal" tabindex="-1" aria-labelledby="addLeagueModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addLeagueModalLabel">Ajouter une Ligue</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <label for="new_display_name">Nom de la ligue</label>
+          <input type="text" id="new_display_name" [(ngModel)]="newLeague.display_name" class="form-control mb-2" name="new_display_name">
+
+          <label for="new_country">Pays</label>
+          <input type="text" id="new_country" [(ngModel)]="newLeague.country" class="form-control mb-2" name="new_country">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-success" (click)="createLeague()" data-bs-dismiss="modal">Ajouter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
