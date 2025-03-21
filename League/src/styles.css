@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+
+body {
+    background-image: url('https://cdna.artstation.com/p/assets/images/images/075/142/478/original/aidan-yelamos-berbel-footballnight.gif?1713861751');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+.cadre {
+    background: white;
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
