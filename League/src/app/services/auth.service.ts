@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment.prod';
@@ -13,7 +13,7 @@ export class AuthService {
 
   // Suivi de l'état de connexion
   private isConnectedSubject = new BehaviorSubject<boolean>(this.hasToken());
-  public isConnected$ = this.isConnectedSubject.asObservable(); // Observable pour les composants
+  public isConnected$ = this.isConnectedSubject.asObservable(); 
 
   constructor(private http: HttpClient, private router: Router) {
     this.apiUrl = environment.apiUrl;
@@ -35,10 +35,9 @@ export class AuthService {
       });
     });
   }
-// a utiliser quand l'utilisateur va cliquer sur déconnexion a faire quand la chef aura fini
   logout(): void {
     localStorage.removeItem('token');
-    this.isConnectedSubject.next(false); // Met à jour l'état
+    this.isConnectedSubject.next(false); 
     // this.router.navigate(['/login']);
   }
 
@@ -51,6 +50,19 @@ export class AuthService {
       return false; 
     }
     return !!localStorage.getItem('token');
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  getBearer(): { headers: HttpHeaders } {
+    return {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${this.getToken()}`,
+        'Content-Type': 'application/json'
+      })
+    };
   }
 
 }

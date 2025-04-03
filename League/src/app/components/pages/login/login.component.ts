@@ -22,9 +22,7 @@ export class LoginComponent {
 
   login(): void {
     this.authService.login(this.email, this.password).subscribe({
-      next: (response: any) => { // Utilisation temporaire de `any`
-        console.log('Réponse API:', response);
-    
+      next: (response: any) => { 
         if (response.token) {
           localStorage.setItem('token', response.token);
           this.router.navigate(['/dashboard']);
