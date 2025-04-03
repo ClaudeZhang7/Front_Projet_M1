@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FilterService } from '../../../services/filter.service';
 import { FormsModule } from '@angular/forms'; 
-import { Saison } from '../../../interfaces/Saisons';
+import { Saison } from '../../../interfaces/Saison';
 
 @Component({
   selector: 'app-saisons',

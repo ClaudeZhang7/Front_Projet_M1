@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/environment.prod';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Ligue } from '../../../interfaces/Ligues';
+import { Ligue } from '../../../interfaces/Ligue';
 import { FilterService } from '../../../services/filter.service';
 import { FormsModule } from '@angular/forms'; // Import du FormsModule
 

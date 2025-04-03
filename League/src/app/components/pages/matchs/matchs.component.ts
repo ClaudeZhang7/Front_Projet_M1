@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FilterService } from '../../../services/filter.service';
 import { FormsModule } from '@angular/forms';
-import { Matchs } from '../../../interfaces/Matchs';
+import { Match } from '../../../interfaces/Match';
 
 @Component({
   selector: 'app-matchs',
@@ -18,10 +18,10 @@ import { Matchs } from '../../../interfaces/Matchs';
 export class MatchsComponent implements OnInit {
 
   private apiUrl = environment.apiUrl + '/matchs';
-  public listMatchs: Matchs[] = [];
+  public listMatchs: Match[] = [];
   searchTerm: string = '';
   errorMessage: string = '';
-  selectedMatch: Matchs | null = null;
+  selectedMatch: Match | null = null;
 
   newMatch = {
     date: '',
@@ -38,13 +38,14 @@ export class MatchsComponent implements OnInit {
     });
   }
 
+  // A remettre quand on aura l'api !! et enlever celui d'en bas
   // getMatchs(): Observable<Matchs[]> {
   //   return this.http.get<Matchs[]>(this.apiUrl);
   // }
 
   // simulation en attendant l'api fonctionnel
-  getMatchs(): Observable<Matchs[]> {
-    const mockMatchs: Matchs[] = [
+  getMatchs(): Observable<Match[]> {
+    const mockMatchs: Match[] = [
       {
         id: 1,
         date: '2024-04-01',
@@ -68,7 +69,7 @@ export class MatchsComponent implements OnInit {
   }
 
   createMatch(): void {
-    this.http.post<Matchs>(this.apiUrl, this.newMatch, this.authService.getBearer()).subscribe({
+    this.http.post<Match>(this.apiUrl, this.newMatch, this.authService.getBearer()).subscribe({
       next: (createdMatch) => {
         this.listMatchs.push(createdMatch);
         this.newMatch = { date: '', equipe_domicile: '', score: '', equipe_exterieur: '' };
@@ -81,7 +82,7 @@ export class MatchsComponent implements OnInit {
     });
   }
 
-  editMatch(match: Matchs): void {
+  editMatch(match: Match): void {
     this.selectedMatch = { ...match };
   }
 
@@ -95,7 +96,7 @@ export class MatchsComponent implements OnInit {
       equipe_exterieur: this.selectedMatch.equipe_exterieur
     };
 
-    this.http.patch<Matchs>(`${this.apiUrl}/${this.selectedMatch.id}`, updateData, this.authService.getBearer()).subscribe({
+    this.http.patch<Match>(`${this.apiUrl}/${this.selectedMatch.id}`, updateData, this.authService.getBearer()).subscribe({
       next: (updatedMatch) => {
         this.listMatchs = this.listMatchs.map(match =>
           match.id === updatedMatch.id ? updatedMatch : match
@@ -123,7 +124,7 @@ export class MatchsComponent implements OnInit {
     });
   }
 
-  get filteredMatchs(): Matchs[] {
+  get filteredMatchs(): Match[] {
     return this.filterService.filterData(this.listMatchs, this.searchTerm, 'equipe_domicile');
   }
 }
