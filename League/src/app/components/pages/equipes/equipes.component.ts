@@ -29,11 +29,7 @@ export class EquipesComponent implements OnInit {
     stade: ''
   };
 
-  constructor(
-    public authService: AuthService,
-    private http: HttpClient,
-    private filterService: FilterService
-  ) {}
+  constructor(public authService: AuthService,private http: HttpClient,private filterService: FilterService) {}
 
   ngOnInit(): void {
     this.getEquipes().subscribe(data => {

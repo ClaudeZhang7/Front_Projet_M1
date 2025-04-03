@@ -38,15 +38,43 @@ export class SaisonsComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("lancé");
-    // this.getSaison().subscribe(data => {
-    //   this.listSaisons = data;
-    // });
+    this.getSaison().subscribe(data => {
+      this.listSaisons = data;
+    });
   }
 
+  // a remettre et supprimer l'autre quand y'aura l'api
+  // getSaison(): Observable<Saison[]> {
+  //   return this.http.get<Saison[]>(this.apiUrl);
+  // }
 
   getSaison(): Observable<Saison[]> {
-    return this.http.get<Saison[]>(this.apiUrl);
-  }
+      const mockMatchs: Saison[] = [
+        {
+          id: 1,
+          league_id: 1,
+          debut: "2024-04-01",            
+          fin: "2024-04-01",              
+          nb_equipes: 20,
+          nb_arbitres: 15,
+          nb_remplacements: 5
+        },
+        {
+          id: 2,
+          league_id: 2,
+          debut: "2024-04-01",            
+          fin: "2024-04-01",              
+          nb_equipes: 22,
+          nb_arbitres: 10,
+          nb_remplacements: 9
+        }
+      ];
+    
+      return new Observable(observer => {
+        observer.next(mockMatchs);
+        observer.complete();
+      });
+    }
 
   createSaison(): void {
     this.http.post<Saison>(this.apiUrl, this.newSaison, this.authService.getBearer()).subscribe({
