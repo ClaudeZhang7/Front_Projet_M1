@@ -76,10 +76,11 @@
           <form>
             <input type="date" [(ngModel)]="newSaison.debut" class="form-control mb-2" name="new_debut" placeholder="Début">
             <input type="date" [(ngModel)]="newSaison.fin" class="form-control mb-2" name="new_fin" placeholder="Fin">
-            <input type="number"  class="form-control mb-2" name="new_nb_equipes" placeholder="Nombre d'équipes">
-            <input type="number"  class="form-control mb-2" name="new_nb_arbitres" placeholder="Nombre d'arbitres">
-            <input type="number"  class="form-control mb-2" name="new_nb_remplacements" placeholder="Nombre de remplacements">
-            <input type="number"  class="form-control mb-2" name="new_nb_league" placeholder="LeagueId">
+            <input type="number" [(ngModel)]="newSaison.nb_equipe"   class="form-control mb-2" name="new_nb_equipes" placeholder="Nombre d'équipes">
+            <input type="number"  [(ngModel)]="newSaison.nb_arbitre" class="form-control mb-2" name="new_nb_arbitres" placeholder="Nombre d'arbitres">
+            <input type="number"  [(ngModel)]="newSaison.nb_remplacement" class="form-control mb-2" name="new_nb_remplacements" placeholder="Nombre de remplacements">
+            <input type="number" [(ngModel)]="newSaison.league" class="form-control mb-2" name="new_league" placeholder="LeagueId">
+
           </form>
         </div>
         <div class="modal-footer">
