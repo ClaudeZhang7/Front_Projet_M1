@@ -16,7 +16,7 @@ import { Saison } from '../../../interfaces/Saison';
   styleUrl: './saisons.component.css'
 })
 export class SaisonsComponent implements OnInit {
-  private apiUrl = environment.apiUrl + '/saisons';
+  private apiUrl = environment.apiUrl + '/saison';
   public listSaisons: Saison[] = []; 
   searchTerm: string = '';
   errorMessage: string = ''; 
@@ -25,9 +25,10 @@ export class SaisonsComponent implements OnInit {
   newSaison = {
     debut: '',
     fin: '',
-    nb_equipes: 0,
-    nb_arbitres: 0,
-    nb_remplacements: 0
+    nb_equipe: 0,
+    nb_arbitre: 0,
+    nb_remplacement: 0,
+    league:0
   };
 
   // valeur pour la modif
@@ -44,43 +45,41 @@ export class SaisonsComponent implements OnInit {
   }
 
   // a remettre et supprimer l'autre quand y'aura l'api
-  // getSaison(): Observable<Saison[]> {
-  //   return this.http.get<Saison[]>(this.apiUrl);
-  // }
-
   getSaison(): Observable<Saison[]> {
-      const mockMatchs: Saison[] = [
-        {
-          id: 1,
-          league_id: 1,
-          debut: "2024-04-01",            
-          fin: "2024-04-01",              
-          nb_equipes: 20,
-          nb_arbitres: 15,
-          nb_remplacements: 5
-        },
-        {
-          id: 2,
-          league_id: 2,
-          debut: "2024-04-01",            
-          fin: "2024-04-01",              
-          nb_equipes: 22,
-          nb_arbitres: 10,
-          nb_remplacements: 9
-        }
-      ];
+    return this.http.get<Saison[]>(this.apiUrl);
+  }
+
+  // getSaison(): Observable<Saison[]> {
+  //     const mockMatchs: Saison[] = [
+  //       {
+  //         id: 1,
+  //         debut: "2024-04-01",            
+  //         fin: "2024-04-01",              
+  //         nb_equipe: 20,
+  //         nb_arbitre: 15,
+  //         nb_remplacement: 5
+  //       },
+  //       {
+  //         id: 2,
+  //         debut: "2024-04-01",            
+  //         fin: "2024-04-01",              
+  //         nb_equipe: 22,
+  //         nb_arbitre: 10,
+  //         nb_remplacement: 9
+  //       }
+  //     ];
     
-      return new Observable(observer => {
-        observer.next(mockMatchs);
-        observer.complete();
-      });
-    }
+  //     return new Observable(observer => {
+  //       observer.next(mockMatchs);
+  //       observer.complete();
+  //     });
+  //   }
 
   createSaison(): void {
     this.http.post<Saison>(this.apiUrl, this.newSaison, this.authService.getBearer()).subscribe({
       next: (createdSaison) => {
         this.listSaisons.push(createdSaison); 
-        this.newSaison = { debut: '', fin: '', nb_equipes : 0, nb_arbitres : 0, nb_remplacements: 0 };
+        this.newSaison = { debut: '', fin: '', nb_equipe : 0, nb_arbitre : 0, nb_remplacement: 0, league:0 };
         this.errorMessage = '';
       },
       error: (err) => {
@@ -93,7 +92,6 @@ export class SaisonsComponent implements OnInit {
     });
   }
   
-
   editSaison(saison : Saison): void {
     this.selectedSaison = { 
       ...saison
@@ -106,9 +104,9 @@ export class SaisonsComponent implements OnInit {
     const updateData = {
       debut: this.selectedSaison.debut,
       fin: this.selectedSaison.fin,
-      nb_equipes : this.selectedSaison.nb_equipes,
-      nb_arbitres : this.selectedSaison.nb_arbitres,
-      nb_remplacements : this.selectedSaison.nb_remplacements
+      nb_equipe : this.selectedSaison.nb_equipe,
+      nb_arbitre : this.selectedSaison.nb_arbitre,
+      nb_remplacement : this.selectedSaison.nb_remplacement
     };
   
     this.http.patch<Saison>(`${this.apiUrl}/${this.selectedSaison.id}`,updateData, this.authService.getBearer()).subscribe({

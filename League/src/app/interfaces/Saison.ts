@@ -1,10 +1,11 @@
 export interface Saison {
     id: number;
-    league_id: number;
+    // league_id: number;
     debut: string;            
     fin: string;              
-    nb_equipes: number;
-    nb_arbitres: number;
-    nb_remplacements: number;
+    nb_equipe: number;
+    nb_arbitre: number;
+    nb_remplacement: number;
+    league: number;
   }
   
