@@ -12,7 +12,6 @@
     <thead class="table-primary">
       <tr>
         <th>ID</th>
-        <th>League ID</th>
         <th>Début</th>
         <th>Fin</th>
         <th>Nb Équipes</th>
@@ -24,12 +23,11 @@
     <tbody>
       <tr *ngFor="let saison of filteredSaisons">
         <td>{{ saison.id }}</td>
-        <td>{{ saison.league_id }}</td>
         <td>{{ saison.debut | date: 'yyyy-MM-dd' }}</td>
         <td>{{ saison.fin | date: 'yyyy-MM-dd' }}</td>
-        <td>{{ saison.nb_equipes }}</td>
-        <td>{{ saison.nb_arbitres }}</td>
-        <td>{{ saison.nb_remplacements }}</td>
+        <td>{{ saison.nb_equipe }}</td>
+        <td>{{ saison.nb_arbitre }}</td>
+        <td>{{ saison.nb_remplacement }}</td>
         <td *ngIf="authService.isConnected$ | async">
           <button class="btn btn-warning btn-sm" (click)="editSaison(saison)" data-bs-toggle="modal" data-bs-target="#editSaisonModal">Modifier</button>
           <button class="btn btn-danger btn-sm" (click)="deleteSaison(saison.id)">Supprimer</button>
@@ -51,12 +49,12 @@
         </div>
         <div class="modal-body" *ngIf="selectedSaison">
           <form>
-            <input type="number" [(ngModel)]="selectedSaison.league_id" class="form-control mb-2" name="league_id" placeholder="League ID">
             <input type="date" [(ngModel)]="selectedSaison.debut" class="form-control mb-2" name="debut" placeholder="Début">
             <input type="date" [(ngModel)]="selectedSaison.fin" class="form-control mb-2" name="fin" placeholder="Fin">
-            <input type="number" [(ngModel)]="selectedSaison.nb_equipes" class="form-control mb-2" name="nb_equipes" placeholder="Nombre d'équipes">
-            <input type="number" [(ngModel)]="selectedSaison.nb_arbitres" class="form-control mb-2" name="nb_arbitres" placeholder="Nombre d'arbitres">
-            <input type="number" [(ngModel)]="selectedSaison.nb_remplacements" class="form-control mb-2" name="nb_remplacements" placeholder="Nombre de remplacements">
+            <input type="number" [(ngModel)]="selectedSaison.nb_equipe" class="form-control mb-2" name="nb_equipes" placeholder="Nombre d'équipes">
+            <input type="number" [(ngModel)]="selectedSaison.nb_arbitre" class="form-control mb-2" name="nb_arbitres" placeholder="Nombre d'arbitres">
+            <input type="number" [(ngModel)]="selectedSaison.nb_remplacement" class="form-control mb-2" name="nb_remplacements" placeholder="Nombre de remplacements">
+            <input type="number" [(ngModel)]="selectedSaison.league" class="form-control mb-2" name="league" placeholder="LeagueId">
           </form>
         </div>
         <div class="modal-footer">
@@ -78,9 +76,10 @@
           <form>
             <input type="date" [(ngModel)]="newSaison.debut" class="form-control mb-2" name="new_debut" placeholder="Début">
             <input type="date" [(ngModel)]="newSaison.fin" class="form-control mb-2" name="new_fin" placeholder="Fin">
-            <input type="number" [(ngModel)]="newSaison.nb_equipes" class="form-control mb-2" name="new_nb_equipes" placeholder="Nombre d'équipes">
-            <input type="number" [(ngModel)]="newSaison.nb_arbitres" class="form-control mb-2" name="new_nb_arbitres" placeholder="Nombre d'arbitres">
-            <input type="number" [(ngModel)]="newSaison.nb_remplacements" class="form-control mb-2" name="new_nb_remplacements" placeholder="Nombre de remplacements">
+            <input type="number"  class="form-control mb-2" name="new_nb_equipes" placeholder="Nombre d'équipes">
+            <input type="number"  class="form-control mb-2" name="new_nb_arbitres" placeholder="Nombre d'arbitres">
+            <input type="number"  class="form-control mb-2" name="new_nb_remplacements" placeholder="Nombre de remplacements">
+            <input type="number"  class="form-control mb-2" name="new_nb_league" placeholder="LeagueId">
           </form>
         </div>
         <div class="modal-footer">
