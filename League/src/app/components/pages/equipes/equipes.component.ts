@@ -16,7 +16,7 @@ import { Equipe } from '../../../interfaces/Equipe';
   styleUrls: ['./equipes.component.css']
 })
 export class EquipesComponent implements OnInit {
-
+  private nextId: number = 3; 
   private apiUrl = environment.apiUrl + '/equipes';
   public listEquipes: Equipe[] = [];
   searchTerm: string = '';
@@ -57,60 +57,88 @@ export class EquipesComponent implements OnInit {
   }
 
   createEquipe(): void {
-    this.http.post<Equipe>(this.apiUrl, this.newEquipe, this.authService.getBearer()).subscribe({
-      next: (createdEquipe) => {
-        this.listEquipes.push(createdEquipe);
-        this.newEquipe = { nom: '', ville: '', stade: '' };
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Échec de la création. Vérifiez les champs ou vos permissions.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    const createdEquipe: Equipe = {
+      id: this.nextId++,
+      ...this.newEquipe
+    };
+  
+    this.listEquipes.push(createdEquipe);
+    this.newEquipe = { nom: '', ville: '', stade: '' };
+    this.errorMessage = '';
   }
+  
 
+  // createEquipe(): void {
+  //   this.http.post<Equipe>(this.apiUrl, this.newEquipe, this.authService.getBearer()).subscribe({
+  //     next: (createdEquipe) => {
+  //       this.listEquipes.push(createdEquipe);
+  //       this.newEquipe = { nom: '', ville: '', stade: '' };
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la création. Vérifiez les champs ou vos permissions.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
+  
   editEquipe(equipe: Equipe): void {
     this.selectedEquipe = { ...equipe };
   }
 
   
+  // updateEquipe(): void {
+  //   if (!this.selectedEquipe) return;
+
+  //   const updateData = {
+  //     nom: this.selectedEquipe.nom,
+  //     ville: this.selectedEquipe.ville,
+  //     stade: this.selectedEquipe.stade
+  //   };
+
+  //   this.http.patch<Equipe>(`${this.apiUrl}/${this.selectedEquipe.id}`, updateData, this.authService.getBearer()).subscribe({
+  //     next: (updatedEquipe) => {
+  //       this.listEquipes = this.listEquipes.map(e =>
+  //         e.id === updatedEquipe.id ? updatedEquipe : e
+  //       );
+  //       this.selectedEquipe = null;
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la modification.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
+
   updateEquipe(): void {
     if (!this.selectedEquipe) return;
-
-    const updateData = {
-      nom: this.selectedEquipe.nom,
-      ville: this.selectedEquipe.ville,
-      stade: this.selectedEquipe.stade
-    };
-
-    this.http.patch<Equipe>(`${this.apiUrl}/${this.selectedEquipe.id}`, updateData, this.authService.getBearer()).subscribe({
-      next: (updatedEquipe) => {
-        this.listEquipes = this.listEquipes.map(e =>
-          e.id === updatedEquipe.id ? updatedEquipe : e
-        );
-        this.selectedEquipe = null;
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Échec de la modification.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+  
+    this.listEquipes = this.listEquipes.map(equipe =>
+      equipe.id === this.selectedEquipe!.id ? { ...this.selectedEquipe! } : equipe
+    );
+  
+    this.selectedEquipe = null;
+    this.errorMessage = '';
   }
 
   deleteEquipe(id: number): void {
-    this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
-      next: () => {
-        this.listEquipes = this.listEquipes.filter(e => e.id !== id);
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Échec de la suppression.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    this.listEquipes = this.listEquipes.filter(e => e.id !== id);
+    this.errorMessage = '';
   }
+
+  // deleteEquipe(id: number): void {
+  //   this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
+  //     next: () => {
+  //       this.listEquipes = this.listEquipes.filter(e => e.id !== id);
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la suppression.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   get filteredEquipes(): Equipe[] {
     return this.filterService.filterData(this.listEquipes, this.searchTerm, 'nom');

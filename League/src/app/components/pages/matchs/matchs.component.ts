@@ -16,6 +16,7 @@ import { Match } from '../../../interfaces/Match';
   styleUrls: ['./matchs.component.css']
 })
 export class MatchsComponent implements OnInit {
+  private nextId = 3;
 
   private apiUrl = environment.apiUrl + '/matchs';
   public listMatchs: Match[] = [];
@@ -25,9 +26,9 @@ export class MatchsComponent implements OnInit {
 
   newMatch = {
     date: '',
-    equipe_domicile: '',
-    score: '',
-    equipe_exterieur: ''
+    equipe_domicile: null,
+    score: null,
+    equipe_exterieur: null
   };
 
   constructor(public authService: AuthService, private http: HttpClient, private filterService: FilterService) {}
@@ -69,18 +70,30 @@ export class MatchsComponent implements OnInit {
   }
 
   createMatch(): void {
-    this.http.post<Match>(this.apiUrl, this.newMatch, this.authService.getBearer()).subscribe({
-      next: (createdMatch) => {
-        this.listMatchs.push(createdMatch);
-        this.newMatch = { date: '', equipe_domicile: '', score: '', equipe_exterieur: '' };
-        this.errorMessage = '';
-      },
-      error: (err) => {
-        this.errorMessage = "Échec de la création. Vérifiez les champs ou vos permissions.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    const createdMatch: Match = {
+      ...this.newMatch,
+      id: this.nextId++,
+      date: new Date().toISOString().split('T')[0]  // Écrase proprement
+    };
+  
+    this.listMatchs.push(createdMatch);
+    this.newMatch = { date: '', equipe_domicile: null, score: null, equipe_exterieur: null };
+    this.errorMessage = '';
   }
+
+  // createMatch(): void {
+  //   this.http.post<Match>(this.apiUrl, this.newMatch, this.authService.getBearer()).subscribe({
+  //     next: (createdMatch) => {
+  //       this.listMatchs.push(createdMatch);
+  //       this.newMatch = { date: '', equipe_domicile: '', score: '', equipe_exterieur: '' };
+  //       this.errorMessage = '';
+  //     },
+  //     error: (err) => {
+  //       this.errorMessage = "Échec de la création. Vérifiez les champs ou vos permissions.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   editMatch(match: Match): void {
     this.selectedMatch = { ...match };
@@ -88,41 +101,57 @@ export class MatchsComponent implements OnInit {
 
   updateMatch(): void {
     if (!this.selectedMatch) return;
-
-    const updateData = {
-      date: this.selectedMatch.date,
-      equipe_domicile: this.selectedMatch.equipe_domicile,
-      score: this.selectedMatch.score,
-      equipe_exterieur: this.selectedMatch.equipe_exterieur
-    };
-
-    this.http.patch<Match>(`${this.apiUrl}/${this.selectedMatch.id}`, updateData, this.authService.getBearer()).subscribe({
-      next: (updatedMatch) => {
-        this.listMatchs = this.listMatchs.map(match =>
-          match.id === updatedMatch.id ? updatedMatch : match
-        );
-        this.errorMessage = '';
-        this.selectedMatch = null;
-      },
-      error: () => {
-        this.errorMessage = "Échec de la modification. Vérifiez vos permissions.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+  
+    this.listMatchs = this.listMatchs.map(match =>
+      match.id === this.selectedMatch!.id ? { ...this.selectedMatch! } : match
+    );
+  
+    this.selectedMatch = null;
+    this.errorMessage = '';
   }
+  
+  // updateMatch(): void {
+  //   if (!this.selectedMatch) return;
+
+  //   const updateData = {
+  //     date: this.selectedMatch.date,
+  //     equipe_domicile: this.selectedMatch.equipe_domicile,
+  //     score: this.selectedMatch.score,
+  //     equipe_exterieur: this.selectedMatch.equipe_exterieur
+  //   };
+
+  //   this.http.patch<Match>(`${this.apiUrl}/${this.selectedMatch.id}`, updateData, this.authService.getBearer()).subscribe({
+  //     next: (updatedMatch) => {
+  //       this.listMatchs = this.listMatchs.map(match =>
+  //         match.id === updatedMatch.id ? updatedMatch : match
+  //       );
+  //       this.errorMessage = '';
+  //       this.selectedMatch = null;
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la modification. Vérifiez vos permissions.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   deleteMatch(id: number): void {
-    this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
-      next: () => {
-        this.listMatchs = this.listMatchs.filter(match => match.id !== id);
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Échec de la suppression. Vous n'avez pas le droit.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    this.listMatchs = this.listMatchs.filter(match => match.id !== id);
+    this.errorMessage = '';
   }
+
+  // deleteMatch(id: number): void {
+  //   this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
+  //     next: () => {
+  //       this.listMatchs = this.listMatchs.filter(match => match.id !== id);
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la suppression. Vous n'avez pas le droit.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   get filteredMatchs(): Match[] {
     return this.filterService.filterData(this.listMatchs, this.searchTerm, 'equipe_domicile');
