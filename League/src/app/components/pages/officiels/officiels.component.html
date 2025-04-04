@@ -1,44 +1,97 @@
 <div class="container mt-4 cadre">
-    <h2 class="text-primary">Liste des Officiels</h2>
-    
-    <input type="text" class="form-control mb-3" placeholder="Rechercher un officiel...">
-    
-    <table class="table table-bordered">
-      <thead class="table-primary">
-        <tr>
-          <th>ID</th>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Rôle</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Michel</td>
-          <td>--</td>
-          <td>Arbitre Vidéo</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Dupont</td>
-          <td>Jean</td>
-          <td>Officiel</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <button class="btn btn-success">Ajouter un Officiel</button>
+  <h2 class="text-primary">Liste des Officiels</h2>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
-  
+
+  <!-- Recherche -->
+  <input type="text" class="form-control mb-3" placeholder="Rechercher un officiel..." [(ngModel)]="searchTerm">
+
+  <!-- Tableau -->
+  <table class="table table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Rôle</th>
+        <th *ngIf="authService.isConnected$ | async">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let officiel of filteredOfficiels">
+        <td>{{ officiel.id }}</td>
+        <td>{{ officiel.nom }}</td>
+        <td>{{ officiel.prenom }}</td>
+        <td>{{ officiel.role }}</td>
+        <td *ngIf="authService.isConnected$ | async">
+          <button class="btn btn-warning btn-sm" (click)="editOfficiel(officiel)" data-bs-toggle="modal" data-bs-target="#editOfficielModal">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteOfficiel(officiel.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Bouton Ajouter -->
+  <button class="btn btn-success mb-3" *ngIf="authService.isConnected$ | async" data-bs-toggle="modal" data-bs-target="#addOfficielModal">
+    Ajouter un Officiel
+  </button>
+
+  <!-- Modal Modification -->
+  <div class="modal fade" id="editOfficielModal" tabindex="-1" aria-labelledby="editOfficielModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modifier l'Officiel</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form *ngIf="selectedOfficiel">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" [(ngModel)]="selectedOfficiel.nom" name="nom" class="form-control mb-2">
+
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" [(ngModel)]="selectedOfficiel.prenom" name="prenom" class="form-control mb-2">
+
+            <label for="role">Rôle</label>
+            <input type="text" id="role" [(ngModel)]="selectedOfficiel.role" name="role" class="form-control mb-2">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-primary" (click)="updateOfficiel()" data-bs-dismiss="modal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajout -->
+  <div class="modal fade" id="addOfficielModal" tabindex="-1" aria-labelledby="addOfficielModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter un Officiel</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <label for="new_nom">Nom</label>
+            <input type="text" id="new_nom" [(ngModel)]="newOfficiel.nom" name="new_nom" class="form-control mb-2">
+
+            <label for="new_prenom">Prénom</label>
+            <input type="text" id="new_prenom" [(ngModel)]="newOfficiel.prenom" name="new_prenom" class="form-control mb-2">
+
+            <label for="new_role">Rôle</label>
+            <input type="text" id="new_role" [(ngModel)]="newOfficiel.role" name="new_role" class="form-control mb-2">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-success" (click)="createOfficiel()" data-bs-dismiss="modal">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -17,7 +17,6 @@
         <th>Nom</th>
         <th>Prénom</th>
         <th>Date de Naissance</th>
-        <th>Nationalité</th>
         <th>Poste</th>
         <th>Équipe</th>
         <th *ngIf="authService.isConnected$ | async">Actions</th>
@@ -29,7 +28,6 @@
         <td>{{ joueur.nom }}</td>
         <td>{{ joueur.prenom }}</td>
         <td>{{ joueur.date_naissance | date: 'yyyy-MM-dd' }}</td>
-        <td>{{ joueur.nationalite }}</td>
         <td>{{ joueur.poste }}</td>
         <td>{{ joueur.equipe }}</td>
         <td *ngIf="authService.isConnected$ | async">
@@ -64,9 +62,6 @@
             <label for="date_naissance">Date de Naissance</label>
             <input type="date" id="date_naissance" [(ngModel)]="selectedJoueur.date_naissance" name="date_naissance" class="form-control mb-2">
 
-            <label for="nationalite">Nationalité</label>
-            <input type="text" id="nationalite" [(ngModel)]="selectedJoueur.nationalite" name="nationalite" class="form-control mb-2">
-
             <label for="poste">Poste</label>
             <input type="text" id="poste" [(ngModel)]="selectedJoueur.poste" name="poste" class="form-control mb-2">
 
@@ -100,9 +95,6 @@
 
             <label for="new_date_naissance">Date de Naissance</label>
             <input type="date" id="new_date_naissance" [(ngModel)]="newJoueur.date_naissance" name="new_date_naissance" class="form-control mb-2">
-
-            <label for="new_nationalite">Nationalité</label>
-            <input type="text" id="new_nationalite" [(ngModel)]="newJoueur.nationalite" name="new_nationalite" class="form-control mb-2">
 
             <label for="new_poste">Poste</label>
             <input type="text" id="new_poste" [(ngModel)]="newJoueur.poste" name="new_poste" class="form-control mb-2">

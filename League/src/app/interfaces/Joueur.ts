@@ -3,7 +3,6 @@ export interface Joueur {
     nom: string;
     prenom: string;
     date_naissance: string; 
-    nationalite: string;
     poste: string;
     equipe: string; 
   }

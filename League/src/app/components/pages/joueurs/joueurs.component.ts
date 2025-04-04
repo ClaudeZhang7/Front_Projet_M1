@@ -27,7 +27,6 @@ export class JoueursComponent implements OnInit {
     nom: '',
     prenom: '',
     date_naissance: '',
-    nationalite: '',
     poste: '',
     equipe: ''
   };
@@ -53,7 +52,6 @@ export class JoueursComponent implements OnInit {
         nom: 'Messi',
         prenom: 'Lionel',
         date_naissance: '1987-06-24',
-        nationalite: 'Argentine',
         poste: 'Attaquant',
         equipe: 'PSG'
       },
@@ -62,7 +60,6 @@ export class JoueursComponent implements OnInit {
         nom: 'Cristiano',
         prenom: 'Ronaldo',
         date_naissance: '1985-02-05',
-        nationalite: 'Portugaise',
         poste: 'Attaquant',
         equipe: 'Manchester United'
       }
@@ -79,7 +76,7 @@ export class JoueursComponent implements OnInit {
       next: (createdJoueur) => {
         this.listJoueurs.push(createdJoueur);
         this.newJoueur = {
-          nom: '', prenom: '', date_naissance: '', nationalite: '', poste: '', equipe: ''
+          nom: '', prenom: '', date_naissance: '', poste: '', equipe: ''
         };
         this.errorMessage = '';
       },
@@ -101,7 +98,6 @@ export class JoueursComponent implements OnInit {
       nom: this.selectedJoueur.nom,
       prenom: this.selectedJoueur.prenom,
       date_naissance: this.selectedJoueur.date_naissance,
-      nationalite: this.selectedJoueur.nationalite,
       poste: this.selectedJoueur.poste,
       equipe: this.selectedJoueur.equipe
     };
