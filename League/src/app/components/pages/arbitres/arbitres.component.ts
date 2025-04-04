@@ -16,7 +16,7 @@ import { Arbitre } from '../../../interfaces/Arbitre';
   styleUrls: ['./arbitres.component.css']
 })
 export class ArbitresComponent implements OnInit {
-
+  private nextId: number = 3; 
   private apiUrl = environment.apiUrl + '/arbitres';
   public listArbitres: Arbitre[] = [];
   searchTerm: string = '';
@@ -56,18 +56,28 @@ export class ArbitresComponent implements OnInit {
   }
 
   createArbitre(): void {
-    this.http.post<Arbitre>(this.apiUrl, this.newArbitre, this.authService.getBearer()).subscribe({
-      next: (createdArbitre) => {
-        this.listArbitres.push(createdArbitre);
-        this.newArbitre = { nom: '', prenom: '', nationalite: '' };
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Échec de la création. Vérifiez les champs ou vos permissions.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    const createdArbitre: Arbitre = {
+      id: this.nextId++,
+      ...this.newArbitre
+    };
+  
+    this.listArbitres.push(createdArbitre);
+    this.newArbitre = { nom: '', prenom: '', nationalite: '' };
+    this.errorMessage = '';
   }
+  // createArbitre(): void {
+  //   this.http.post<Arbitre>(this.apiUrl, this.newArbitre, this.authService.getBearer()).subscribe({
+  //     next: (createdArbitre) => {
+  //       this.listArbitres.push(createdArbitre);
+  //       this.newArbitre = { nom: '', prenom: '', nationalite: '' };
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la création. Vérifiez les champs ou vos permissions.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   editArbitre(arbitre: Arbitre): void {
     this.selectedArbitre = { ...arbitre };
@@ -75,40 +85,56 @@ export class ArbitresComponent implements OnInit {
 
   updateArbitre(): void {
     if (!this.selectedArbitre) return;
-
-    const updateData = {
-      nom: this.selectedArbitre.nom,
-      prenom: this.selectedArbitre.prenom,
-      nationalite: this.selectedArbitre.nationalite
-    };
-
-    this.http.patch<Arbitre>(`${this.apiUrl}/${this.selectedArbitre.id}`, updateData, this.authService.getBearer()).subscribe({
-      next: (updatedArbitre) => {
-        this.listArbitres = this.listArbitres.map(a =>
-          a.id === updatedArbitre.id ? updatedArbitre : a
-        );
-        this.selectedArbitre = null;
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Échec de la modification.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+  
+    this.listArbitres = this.listArbitres.map(arbitre =>
+      arbitre.id === this.selectedArbitre!.id ? { ...this.selectedArbitre! } : arbitre
+    );
+  
+    this.selectedArbitre = null;
+    this.errorMessage = '';
   }
 
   deleteArbitre(id: number): void {
-    this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
-      next: () => {
-        this.listArbitres = this.listArbitres.filter(a => a.id !== id);
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Échec de la suppression.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    this.listArbitres = this.listArbitres.filter(a => a.id !== id);
+    this.errorMessage = '';
   }
+  
+  // updateArbitre(): void {
+  //   if (!this.selectedArbitre) return;
+
+  //   const updateData = {
+  //     nom: this.selectedArbitre.nom,
+  //     prenom: this.selectedArbitre.prenom,
+  //     nationalite: this.selectedArbitre.nationalite
+  //   };
+
+  //   this.http.patch<Arbitre>(`${this.apiUrl}/${this.selectedArbitre.id}`, updateData, this.authService.getBearer()).subscribe({
+  //     next: (updatedArbitre) => {
+  //       this.listArbitres = this.listArbitres.map(a =>
+  //         a.id === updatedArbitre.id ? updatedArbitre : a
+  //       );
+  //       this.selectedArbitre = null;
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la modification.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
+
+  // deleteArbitre(id: number): void {
+  //   this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
+  //     next: () => {
+  //       this.listArbitres = this.listArbitres.filter(a => a.id !== id);
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Échec de la suppression.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   get filteredArbitres(): Arbitre[] {
     return this.filterService.filterData(this.listArbitres, this.searchTerm, 'nom');

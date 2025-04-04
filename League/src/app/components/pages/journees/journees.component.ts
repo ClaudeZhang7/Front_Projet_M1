@@ -16,6 +16,7 @@ import { Journee } from '../../../interfaces/Journee';
   styleUrls: ['./journees.component.css']
 })
 export class JourneesComponent implements OnInit {
+  private nextId = 3; 
 
   private apiUrl = environment.apiUrl + '/journees';
   public listJournees: Journee[] = [];
@@ -24,8 +25,8 @@ export class JourneesComponent implements OnInit {
   selectedJournee: Journee | null = null;
 
   newJournee = {
-    saison_id: 0,
-    numero: 0,
+    saison_id: null,
+    numero: null,
     debut: '',
     fin: ''
   };
@@ -57,18 +58,30 @@ export class JourneesComponent implements OnInit {
   }
 
   createJournee(): void {
-    this.http.post<Journee>(this.apiUrl, this.newJournee, this.authService.getBearer()).subscribe({
-      next: (created) => {
-        this.listJournees.push(created);
-        this.newJournee = { saison_id: 0, numero: 0, debut: '', fin: '' };
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Erreur lors de la création.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    const created: Journee = {
+      id: this.nextId++,
+      ...this.newJournee
+    };
+  
+    this.listJournees.push(created);
+    this.newJournee = { saison_id: null, numero: null, debut: '', fin: '' };
+    this.errorMessage = '';
   }
+
+
+  // createJournee(): void {
+  //   this.http.post<Journee>(this.apiUrl, this.newJournee, this.authService.getBearer()).subscribe({
+  //     next: (created) => {
+  //       this.listJournees.push(created);
+  //       this.newJournee = { saison_id: 0, numero: 0, debut: '', fin: '' };
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Erreur lors de la création.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   editJournee(j: Journee): void {
     this.selectedJournee = { ...j };
@@ -76,39 +89,56 @@ export class JourneesComponent implements OnInit {
 
   updateJournee(): void {
     if (!this.selectedJournee) return;
-
-    const updateData = {
-      saison_id: this.selectedJournee.saison_id,
-      numero: this.selectedJournee.numero,
-      debut: this.selectedJournee.debut,
-      fin: this.selectedJournee.fin
-    };
-
-    this.http.patch<Journee>(`${this.apiUrl}/${this.selectedJournee.id}`, updateData, this.authService.getBearer()).subscribe({
-      next: (updated) => {
-        this.listJournees = this.listJournees.map(j => j.id === updated.id ? updated : j);
-        this.selectedJournee = null;
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Erreur lors de la modification.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+  
+    this.listJournees = this.listJournees.map(j =>
+      j.id === this.selectedJournee!.id ? this.selectedJournee! : j
+    );
+  
+    this.selectedJournee = null;
+    this.errorMessage = '';
   }
+  
+
+  // updateJournee(): void {
+  //   if (!this.selectedJournee) return;
+
+  //   const updateData = {
+  //     saison_id: this.selectedJournee.saison_id,
+  //     numero: this.selectedJournee.numero,
+  //     debut: this.selectedJournee.debut,
+  //     fin: this.selectedJournee.fin
+  //   };
+
+  //   this.http.patch<Journee>(`${this.apiUrl}/${this.selectedJournee.id}`, updateData, this.authService.getBearer()).subscribe({
+  //     next: (updated) => {
+  //       this.listJournees = this.listJournees.map(j => j.id === updated.id ? updated : j);
+  //       this.selectedJournee = null;
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Erreur lors de la modification.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   deleteJournee(id: number): void {
-    this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
-      next: () => {
-        this.listJournees = this.listJournees.filter(j => j.id !== id);
-        this.errorMessage = '';
-      },
-      error: () => {
-        this.errorMessage = "Erreur lors de la suppression.";
-        setTimeout(() => this.errorMessage = '', 4000);
-      }
-    });
+    this.listJournees = this.listJournees.filter(j => j.id !== id);
+    this.errorMessage = '';
   }
+
+  // deleteJournee(id: number): void {
+  //   this.http.delete<void>(`${this.apiUrl}/${id}`, this.authService.getBearer()).subscribe({
+  //     next: () => {
+  //       this.listJournees = this.listJournees.filter(j => j.id !== id);
+  //       this.errorMessage = '';
+  //     },
+  //     error: () => {
+  //       this.errorMessage = "Erreur lors de la suppression.";
+  //       setTimeout(() => this.errorMessage = '', 4000);
+  //     }
+  //   });
+  // }
 
   get filteredJournees(): Journee[] {
     return this.filterService.filterData(this.listJournees, this.searchTerm, 'numero');
