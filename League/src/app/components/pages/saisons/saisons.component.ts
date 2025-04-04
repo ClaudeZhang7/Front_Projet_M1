@@ -25,10 +25,10 @@ export class SaisonsComponent implements OnInit {
   newSaison = {
     debut: '',
     fin: '',
-    nb_equipe: 0,
-    nb_arbitre: 0,
-    nb_remplacement: 0,
-    league:0
+    nb_equipe: null,
+    nb_arbitre: null,
+    nb_remplacement: null,
+    league:null
   };
 
   // valeur pour la modif
@@ -79,7 +79,7 @@ export class SaisonsComponent implements OnInit {
     this.http.post<Saison>(this.apiUrl, this.newSaison, this.authService.getBearer()).subscribe({
       next: (createdSaison) => {
         this.listSaisons.push(createdSaison); 
-        this.newSaison = { debut: '', fin: '', nb_equipe : 0, nb_arbitre : 0, nb_remplacement: 0, league:0 };
+        this.newSaison = { debut: '', fin: '', nb_equipe : null, nb_arbitre : null, nb_remplacement: null, league:null };
         this.errorMessage = '';
       },
       error: (err) => {
