@@ -1,44 +1,97 @@
 <div class="container mt-4 cadre">
-    <h2 class="text-primary">Liste des Équipes</h2>
-    
-    <input type="text" class="form-control mb-3" placeholder="Rechercher une équipe...">
-    
-    <table class="table table-bordered">
-      <thead class="table-primary">
-        <tr>
-          <th>ID</th>
-          <th>Nom</th>
-          <th>Ville</th>
-          <th>Stade</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>FC Barcelone</td>
-          <td>Barcelone</td>
-          <td>Camp Nou</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Manchester City</td>
-          <td>Manchester</td>
-          <td>Etihad Stadium</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <button class="btn btn-success">Ajouter une Équipe</button>
+  <h2 class="text-primary">Liste des Équipes</h2>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
-  
+
+  <!-- Recherche -->
+  <input type="text" class="form-control mb-3" placeholder="Rechercher une équipe..." [(ngModel)]="searchTerm">
+
+  <!-- Tableau -->
+  <table class="table table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Ville</th>
+        <th>Stade</th>
+        <th *ngIf="authService.isConnected$ | async">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let equipe of filteredEquipes">
+        <td>{{ equipe.id }}</td>
+        <td>{{ equipe.nom }}</td>
+        <td>{{ equipe.ville }}</td>
+        <td>{{ equipe.stade }}</td>
+        <td *ngIf="authService.isConnected$ | async">
+          <button class="btn btn-warning btn-sm" (click)="editEquipe(equipe)" data-bs-toggle="modal" data-bs-target="#editEquipeModal">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteEquipe(equipe.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Bouton Ajouter -->
+  <button class="btn btn-success mb-3" *ngIf="authService.isConnected$ | async" data-bs-toggle="modal" data-bs-target="#addEquipeModal">
+    Ajouter une Équipe
+  </button>
+
+  <!-- Modal Modification -->
+  <div class="modal fade" id="editEquipeModal" tabindex="-1" aria-labelledby="editEquipeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modifier l'Équipe</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form *ngIf="selectedEquipe">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" [(ngModel)]="selectedEquipe.nom" name="nom" class="form-control mb-2">
+
+            <label for="ville">Ville</label>
+            <input type="text" id="ville" [(ngModel)]="selectedEquipe.ville" name="ville" class="form-control mb-2">
+
+            <label for="stade">Stade</label>
+            <input type="text" id="stade" [(ngModel)]="selectedEquipe.stade" name="stade" class="form-control mb-2">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-primary" (click)="updateEquipe()" data-bs-dismiss="modal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajout -->
+  <div class="modal fade" id="addEquipeModal" tabindex="-1" aria-labelledby="addEquipeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter une Équipe</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <label for="new_nom">Nom</label>
+            <input type="text" id="new_nom" [(ngModel)]="newEquipe.nom" name="new_nom" class="form-control mb-2" placeholder="nom">
+
+            <label for="new_ville">Ville</label>
+            <input type="text" id="new_ville" [(ngModel)]="newEquipe.ville" name="new_ville" class="form-control mb-2" placeholder="ville">
+
+            <label for="new_stade">Stade</label>
+            <input type="text" id="new_stade" [(ngModel)]="newEquipe.stade" name="new_stade" class="form-control mb-2" placeholder="stade">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-success" (click)="createEquipe()" data-bs-dismiss="modal">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

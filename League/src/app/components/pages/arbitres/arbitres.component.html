@@ -1,44 +1,97 @@
 <div class="container mt-4 cadre">
-    <h2 class="text-primary">Liste des Arbitres</h2>
-    
-    <input type="text" class="form-control mb-3" placeholder="Rechercher un arbitre...">
-    
-    <table class="table table-bordered">
-      <thead class="table-primary">
-        <tr>
-          <th>ID</th>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Nationalité</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Collina</td>
-          <td>Pierluigi</td>
-          <td>Italie</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Del Piero</td>
-          <td>Giuseppe</td>
-          <td>Italie</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <button class="btn btn-success">Ajouter un Arbitre</button>
+  <h2 class="text-primary">Liste des Arbitres</h2>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
-  
+
+  <!-- Recherche -->
+  <input type="text" class="form-control mb-3" placeholder="Rechercher un arbitre..." [(ngModel)]="searchTerm">
+
+  <!-- Tableau -->
+  <table class="table table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Nationalité</th>
+        <th *ngIf="authService.isConnected$ | async">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let arbitre of filteredArbitres">
+        <td>{{ arbitre.id }}</td>
+        <td>{{ arbitre.nom }}</td>
+        <td>{{ arbitre.prenom }}</td>
+        <td>{{ arbitre.nationalite }}</td>
+        <td *ngIf="authService.isConnected$ | async">
+          <button class="btn btn-warning btn-sm" (click)="editArbitre(arbitre)" data-bs-toggle="modal" data-bs-target="#editArbitreModal">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteArbitre(arbitre.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Bouton Ajouter -->
+  <button class="btn btn-success mb-3" *ngIf="authService.isConnected$ | async" data-bs-toggle="modal" data-bs-target="#addArbitreModal">
+    Ajouter un Arbitre
+  </button>
+
+  <!-- Modal Modification -->
+  <div class="modal fade" id="editArbitreModal" tabindex="-1" aria-labelledby="editArbitreModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modifier l'Arbitre</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form *ngIf="selectedArbitre">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" [(ngModel)]="selectedArbitre.nom" name="nom" class="form-control mb-2">
+
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" [(ngModel)]="selectedArbitre.prenom" name="prenom" class="form-control mb-2">
+
+            <label for="nationalite">Nationalité</label>
+            <input type="text" id="nationalite" [(ngModel)]="selectedArbitre.nationalite" name="nationalite" class="form-control mb-2">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-primary" (click)="updateArbitre()" data-bs-dismiss="modal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajout -->
+  <div class="modal fade" id="addArbitreModal" tabindex="-1" aria-labelledby="addArbitreModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter un Arbitre</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <label for="new_nom">Nom</label>
+            <input type="text" id="new_nom" [(ngModel)]="newArbitre.nom" name="new_nom" class="form-control mb-2" placeholder="Nom">
+
+            <label for="new_prenom">Prénom</label>
+            <input type="text" id="new_prenom" [(ngModel)]="newArbitre.prenom" name="new_prenom" class="form-control mb-2" placeholder="Prenom">
+
+            <label for="new_nationalite">Nationalité</label>
+            <input type="text" id="new_nationalite" [(ngModel)]="newArbitre.nationalite" name="new_nationalite" class="form-control mb-2" placeholder="Nationalité">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-success" (click)="createArbitre()" data-bs-dismiss="modal">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

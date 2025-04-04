@@ -1,54 +1,93 @@
 <div class="container mt-4 cadre">
 
-    <h2 class="text-primary">Liste des Saisons</h2>
-    
-    <input type="text" class="form-control mb-3" placeholder="Rechercher une saison...">
-    
-    <table class="table table-bordered">
-      <thead class="table-primary">
-        <tr>
-          <th>ID</th>
-          <th>League ID</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th>Nb Équipes</th>
-          <th>Nb Arbitres</th>
-          <th>Nb Remplacements</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>5</td>
-          <td>2021-04-21</td>
-          <td>2029-05-19</td>
-          <td>20</td>
-          <td>10</td>
-          <td>5</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>3</td>
-          <td>2020-08-01</td>
-          <td>2028-07-31</td>
-          <td>18</td>
-          <td>8</td>
-          <td>4</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <button class="btn btn-success">Ajouter une Saison</button>
+  <h2 class="text-primary">Liste des Saisons</h2>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
-  
+
+  <input type="text" class="form-control mb-3" placeholder="Rechercher une saison..." [(ngModel)]="searchTerm">
+
+  <table class="table table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Début</th>
+        <th>Fin</th>
+        <th>Nb Équipes</th>
+        <th>Nb Arbitres</th>
+        <th>Nb Remplacements</th>
+        <th *ngIf="authService.isConnected$ | async">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let saison of filteredSaisons">
+        <td>{{ saison.id }}</td>
+        <td>{{ saison.debut | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ saison.fin | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ saison.nb_equipe }}</td>
+        <td>{{ saison.nb_arbitre }}</td>
+        <td>{{ saison.nb_remplacement }}</td>
+        <td *ngIf="authService.isConnected$ | async">
+          <button class="btn btn-warning btn-sm" (click)="editSaison(saison)" data-bs-toggle="modal" data-bs-target="#editSaisonModal">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteSaison(saison.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button class="btn btn-success mb-3" *ngIf="authService.isConnected$ | async"
+          data-bs-toggle="modal" data-bs-target="#addSaisonModal">Ajouter une Saison
+  </button>
+
+  <div class="modal fade" id="editSaisonModal" tabindex="-1" aria-labelledby="editSaisonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editSaisonModalLabel">Modifier la Saison</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedSaison">
+          <form>
+            <input type="date" [(ngModel)]="selectedSaison.debut" class="form-control mb-2" name="debut" placeholder="Début">
+            <input type="date" [(ngModel)]="selectedSaison.fin" class="form-control mb-2" name="fin" placeholder="Fin">
+            <input type="number" [(ngModel)]="selectedSaison.nb_equipe" class="form-control mb-2" name="nb_equipes" placeholder="Nombre d'équipes">
+            <input type="number" [(ngModel)]="selectedSaison.nb_arbitre" class="form-control mb-2" name="nb_arbitres" placeholder="Nombre d'arbitres">
+            <input type="number" [(ngModel)]="selectedSaison.nb_remplacement" class="form-control mb-2" name="nb_remplacements" placeholder="Nombre de remplacements">
+            <input type="number" [(ngModel)]="selectedSaison.league" class="form-control mb-2" name="league" placeholder="LeagueId">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-primary" (click)="updateSaison()" data-bs-dismiss="modal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="addSaisonModal" tabindex="-1" aria-labelledby="addSaisonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addSaisonModalLabel">Ajouter une Saison</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <input type="date" [(ngModel)]="newSaison.debut" class="form-control mb-2" name="new_debut" placeholder="Début">
+            <input type="date" [(ngModel)]="newSaison.fin" class="form-control mb-2" name="new_fin" placeholder="Fin">
+            <input type="number"  class="form-control mb-2" name="new_nb_equipes" placeholder="Nombre d'équipes">
+            <input type="number"  class="form-control mb-2" name="new_nb_arbitres" placeholder="Nombre d'arbitres">
+            <input type="number"  class="form-control mb-2" name="new_nb_remplacements" placeholder="Nombre de remplacements">
+            <input type="number"  class="form-control mb-2" name="new_nb_league" placeholder="LeagueId">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-success" (click)="createSaison()" data-bs-dismiss="modal">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,47 +1,99 @@
 <div class="container mt-4 cadre">
-    <h2 class="text-primary">Liste des Matchs</h2>
-    
-    <input type="text" class="form-control mb-3" placeholder="Rechercher un match...">
-    
-    <table class="table table-bordered">
-      <thead class="table-primary">
-        <tr>
-          <th>ID</th>
-          <th>Date</th>
-          <th>Équipe Domicile</th>
-          <th>Score</th>
-          <th>Équipe Extérieur</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>2024-02-15</td>
-          <td>Manchester United</td>
-          <td>2 - 1</td>
-          <td>Real Madrid</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>2024-03-20</td>
-          <td>FC Barcelone</td>
-          <td>3 - 0</td>
-          <td>Juventus</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <button class="btn btn-success">Ajouter un Match</button>
+  <h2 class="text-primary">Liste des Matchs</h2>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
-  
+
+  <!-- Recherche -->
+  <input type="text" class="form-control mb-3" placeholder="Rechercher un match..." [(ngModel)]="searchTerm">
+
+  <!-- Tableau -->
+  <table class="table table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Équipe Domicile</th>
+        <th>Score</th>
+        <th>Équipe Extérieur</th>
+        <th *ngIf="authService.isConnected$ | async">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let match of filteredMatchs">
+        <td>{{ match.id }}</td>
+        <td>{{ match.date | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ match.equipe_domicile }}</td>
+        <td>{{ match.score }}</td>
+        <td>{{ match.equipe_exterieur }}</td>
+        <td *ngIf="authService.isConnected$ | async">
+          <button class="btn btn-warning btn-sm" (click)="editMatch(match)" data-bs-toggle="modal" data-bs-target="#editMatchModal">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteMatch(match.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Bouton Ajouter -->
+  <button class="btn btn-success mb-3" *ngIf="authService.isConnected$ | async" data-bs-toggle="modal" data-bs-target="#addMatchModal">
+    Ajouter un Match
+  </button>
+
+  <!-- Modal Modification -->
+  <div class="modal fade" id="editMatchModal" tabindex="-1" aria-labelledby="editMatchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modifier le Match</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form *ngIf="selectedMatch">
+            <label for="equipe_domicile">Équipe Domicile</label>
+            <input type="text" id="equipe_domicile" [(ngModel)]="selectedMatch.equipe_domicile" name="equipe_domicile" class="form-control mb-2">
+
+            <label for="score">Score</label>
+            <input type="text" id="score" [(ngModel)]="selectedMatch.score" name="score" class="form-control mb-2">
+
+            <label for="equipe_exterieur">Équipe Extérieure</label>
+            <input type="text" id="equipe_exterieur" [(ngModel)]="selectedMatch.equipe_exterieur" name="equipe_exterieur" class="form-control mb-2">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-primary" (click)="updateMatch()" data-bs-dismiss="modal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajout -->
+  <div class="modal fade" id="addMatchModal" tabindex="-1" aria-labelledby="addMatchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter un Match</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <label for="new_equipe_domicile">Équipe Domicile</label>
+            <input type="text" id="new_equipe_domicile" [(ngModel)]="newMatch.equipe_domicile" name="new_equipe_domicile" class="form-control mb-2" placeholder="Équipe Domicile">
+
+            <label for="new_score">Score</label>
+            <input type="text" id="new_score" [(ngModel)]="newMatch.score" name="new_score" class="form-control mb-2" placeholder="Score">
+
+            <label for="new_equipe_exterieur">Équipe Extérieure</label>
+            <input type="text" id="new_equipe_exterieur" [(ngModel)]="newMatch.equipe_exterieur" name="new_equipe_exterieur" class="form-control mb-2" placeholder="Équipe Extérieure">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-success" (click)="createMatch()" data-bs-dismiss="modal">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
