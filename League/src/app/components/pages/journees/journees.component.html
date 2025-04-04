@@ -1,47 +1,93 @@
 <div class="container mt-4 cadre">
-    <h2 class="text-primary">Liste des Journées</h2>
-    
-    <input type="text" class="form-control mb-3" placeholder="Rechercher une journée...">
-    
-    <table class="table table-bordered">
-      <thead class="table-primary">
-        <tr>
-          <th>ID</th>
-          <th>Saison ID</th>
-          <th>Numéro</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>2</td>
-          <td>1</td>
-          <td>2024-07-19</td>
-          <td>2024-12-28</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>2</td>
-          <td>2</td>
-          <td>2024-08-01</td>
-          <td>2024-12-15</td>
-          <td>
-            <button class="btn btn-warning btn-sm">Modifier</button>
-            <button class="btn btn-danger btn-sm">Supprimer</button>
-            <button class="btn btn-info btn-sm text-white">Voir</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <button class="btn btn-success">Ajouter une Journée</button>
+  <h2 class="text-primary">Liste des Journées</h2>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
+
+  <!-- Barre de recherche -->
+  <input type="text" class="form-control mb-3" placeholder="Rechercher une journée..." [(ngModel)]="searchTerm">
+
+  <!-- Tableau des journées -->
+  <table class="table table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Saison ID</th>
+        <th>Numéro</th>
+        <th>Début</th>
+        <th>Fin</th>
+        <th *ngIf="authService.isConnected$ | async">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let journee of filteredJournees">
+        <td>{{ journee.id }}</td>
+        <td>{{ journee.saison_id }}</td>
+        <td>{{ journee.numero }}</td>
+        <td>{{ journee.debut | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ journee.fin | date: 'yyyy-MM-dd' }}</td>
+        <td *ngIf="authService.isConnected$ | async">
+          <button class="btn btn-warning btn-sm" (click)="editJournee(journee)" data-bs-toggle="modal" data-bs-target="#editJourneeModal">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteJournee(journee.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Bouton Ajouter -->
+  <button class="btn btn-success mb-3" *ngIf="authService.isConnected$ | async"
+          data-bs-toggle="modal" data-bs-target="#addJourneeModal">
+    Ajouter une Journée
+  </button>
+
+  <!-- Modal Modification -->
+  <div class="modal fade" id="editJourneeModal" tabindex="-1" aria-labelledby="editJourneeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modifier la Journée</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedJournee">
+          <form>
+            <input type="number" [(ngModel)]="selectedJournee.saison_id" class="form-control mb-2" name="saison_id" placeholder="Saison ID">
+            <input type="number" [(ngModel)]="selectedJournee.numero" class="form-control mb-2" name="numero" placeholder="Numéro">
+            <input type="date" [(ngModel)]="selectedJournee.debut" class="form-control mb-2" name="debut" placeholder="Début">
+            <input type="date" [(ngModel)]="selectedJournee.fin" class="form-control mb-2" name="fin" placeholder="Fin">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-primary" (click)="updateJournee()" data-bs-dismiss="modal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajout -->
+  <div class="modal fade" id="addJourneeModal" tabindex="-1" aria-labelledby="addJourneeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter une Journée</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <input type="number" [(ngModel)]="newJournee.saison_id" class="form-control mb-2" name="new_saison_id" placeholder="Saison ID">
+            <input type="number" [(ngModel)]="newJournee.numero" class="form-control mb-2" name="new_numero" placeholder="Numéro">
+            <input type="date" [(ngModel)]="newJournee.debut" class="form-control mb-2" name="new_debut" placeholder="Début">
+            <input type="date" [(ngModel)]="newJournee.fin" class="form-control mb-2" name="new_fin" placeholder="Fin">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-success" (click)="createJournee()" data-bs-dismiss="modal">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
   
